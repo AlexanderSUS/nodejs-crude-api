@@ -1,15 +1,25 @@
 import { createServer } from 'http';
-import { MESSAGE_ERROR_404 } from './const/messages';
-import { CODE_404 } from './const/statusCodes';
+import { MESSAGE_ERROR_400, MESSAGE_ERROR_404 } from './const/messages';
+import { CODE_400, CODE_404 } from './const/statusCodes';
 import { USERS_URL } from './const/urls';
-import getUsers from './controllers/userController';
+import { getUsers, getUser } from './controllers/userController';
+import ID_PARAM_ORDER from './const/id';
 
 const server = createServer((req, res) => {
   if (req.url === USERS_URL && req.method === 'GET') {
     getUsers(req, res);
+  } else if (req.url?.startsWith(`${USERS_URL}/`) && req.method === 'GET') {
+    const id: string = req.url.split('/')[ID_PARAM_ORDER];
+
+    if (id) {
+      getUser(req, res, id);
+    } else {
+      res.writeHead(CODE_400, { 'Content-type': 'application/json' });
+      res.end(JSON.stringify({ message: MESSAGE_ERROR_400 }));
+    }
   } else {
     res.writeHead(CODE_404, { 'Content-type': 'application/json' });
-    res.end(JSON.stringify(MESSAGE_ERROR_404));
+    res.end(JSON.stringify({ message: MESSAGE_ERROR_404 }));
   }
 });
 
