@@ -5,6 +5,7 @@ import {
 import { ID_PARAM_ORDER } from './const/minor';
 import {
   isDeleteUserRequest, isGetUserRequest, isGetUsersRequest,
+  isInvalidMethod,
   isPostUserRequest, isPutUserRequest, isUserGetOrPutOrDeleteRequest,
 } from './utils/requestUtils';
 import { replyBadRequest, replyNotFound } from './utils/responseUtils';
@@ -29,6 +30,8 @@ server.on('request', (req, res) => {
     } else if (isDeleteUserRequest(req)) {
       deleteUser(req, res, id);
     }
+  } else if (isInvalidMethod(req)) {
+    replyBadRequest(res);
   } else {
     replyNotFound(res);
   }
