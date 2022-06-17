@@ -25,14 +25,13 @@ export async function getUser(req: IncomingMessage, res: ServerResponse, id: str
   try {
     const user = await Users.findById(id);
 
-    if (user) {
-      res.writeHead(CODE_200, { 'Content-type': 'application/json' });
-      res.end(JSON.stringify(user));
-    } else {
+    res.writeHead(CODE_200, { 'Content-type': 'application/json' });
+    res.end(JSON.stringify(user));
+  } catch (err) {
+    if (err === MESSAGE_ERROR_404) {
       res.writeHead(CODE_404, { 'Content-type': 'application/json' });
       res.end(JSON.stringify({ message: MESSAGE_ERROR_404 }));
     }
-  } catch (err) {
     console.log(err);
   }
 }
@@ -46,6 +45,26 @@ export async function createUser(req: IncomingMessage, res: ServerResponse) {
 
     res.writeHead(CODE_201, { 'Content-type': 'application/json' });
     res.end(JSON.stringify(user));
+  } catch (err) {
+    if (err === MESSAGE_ERROR_400) {
+      res.writeHead(CODE_400, { 'Content-type': 'application/json' });
+      res.end(JSON.stringify({ message: err }));
+    } else {
+      res.writeHead(CODE_500, { 'Content-type': 'application/json' });
+      res.end(JSON.stringify({ message: MESSAGE_ERROR_500 }));
+    }
+  }
+}
+
+// @desc update a user
+// @route PUT /api/users/:id
+export async function updateUser(req: IncomingMessage, res: ServerResponse, userId: string) {
+  try {
+    const updateData = await getPostData(req);
+    const updatedUser = await Users.updateUser(userId, updateData);
+
+    res.writeHead(CODE_200, { 'Content-type': 'application/json' });
+    res.end(JSON.stringify(updatedUser));
   } catch (err) {
     if (err === MESSAGE_ERROR_400) {
       res.writeHead(CODE_400, { 'Content-type': 'application/json' });

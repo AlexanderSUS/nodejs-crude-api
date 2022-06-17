@@ -13,10 +13,11 @@ export default function getPostData(req: IncomingMessage): Promise<NewUser> {
     req.on('end', async () => {
       const newUser = JSON.parse(body);
 
-      if ('username' in newUser && typeof newUser.username === 'string'
+      if (Object.keys(newUser).length === 3
+        && 'username' in newUser && typeof newUser.username === 'string'
         && 'age' in newUser && typeof newUser.age === 'number'
         && 'hobbies' in newUser) {
-        resolve(newUser);
+        resolve(newUser as NewUser);
       } else {
         reject(MESSAGE_ERROR_400);
       }
