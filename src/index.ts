@@ -2,7 +2,7 @@ import { createServer } from 'http';
 import {
   getUsers, getUser, createUser, updateUser, deleteUser,
 } from './controllers/userController';
-import ID_PARAM_ORDER from './const/id';
+import { ID_PARAM_ORDER } from './const/minor';
 import {
   isDeleteUserRequest, isGetUserRequest, isGetUsersRequest,
   isPostUserRequest, isPutUserRequest, isUserGetOrPutOrDeleteRequest,

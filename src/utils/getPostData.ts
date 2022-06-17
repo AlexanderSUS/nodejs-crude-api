@@ -1,6 +1,7 @@
 import { IncomingMessage } from 'http';
 import { MESSAGE_ERROR_400 } from '../const/messages';
 import { NewUser } from '../types/user';
+import isNewUser from './isNewUser';
 
 export default function getPostData(req: IncomingMessage): Promise<NewUser> {
   return new Promise((resolve, reject) => {
@@ -11,13 +12,10 @@ export default function getPostData(req: IncomingMessage): Promise<NewUser> {
     });
 
     req.on('end', async () => {
-      const newUser = JSON.parse(body);
+      const data = JSON.parse(body);
 
-      if (Object.keys(newUser).length === 3
-        && 'username' in newUser && typeof newUser.username === 'string'
-        && 'age' in newUser && typeof newUser.age === 'number'
-        && 'hobbies' in newUser) {
-        resolve(newUser as NewUser);
+      if (isNewUser(data)) {
+        resolve(data);
       } else {
         reject(MESSAGE_ERROR_400);
       }
