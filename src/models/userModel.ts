@@ -26,10 +26,10 @@ export function findById(id: string): Promise<User> {
 
 export function createUser(newUserData: NewUser): Promise<User> {
   return new Promise((res) => {
-    const newUser = { id: uuidv4(), ...newUserData };
+    const user: User = { id: uuidv4(), ...newUserData };
 
-    db.push(newUser);
-    res(newUser as User);
+    db.push(user);
+    res(user);
   });
 }
 
