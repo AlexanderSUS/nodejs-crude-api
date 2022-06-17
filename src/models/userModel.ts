@@ -1,7 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import db from '../db/db';
 import { NewUser, User } from '../types/user';
-import { MESSAGE_ERROR_400, MESSAGE_ERROR_404 } from '../const/messages';
+import { MESSAGE_ERROR_404 } from '../const/messages';
+import { CODE_204 } from '../const/statusCodes';
+
+import initialData from '../const/initialData';
+
+let db: User[] = initialData;
 
 export function findAllUsers(): Promise<User[]> {
   return new Promise((res) => {
@@ -34,11 +38,25 @@ export function updateUser(id: string, userData: NewUser): Promise<User> {
     const index = db.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      rej(MESSAGE_ERROR_400);
+      rej(MESSAGE_ERROR_404);
     }
 
     db[index] = { id, ...userData };
 
     res(db[index]);
+  });
+}
+
+export function deleteUser(id: string): Promise<number> {
+  return new Promise((res, rej) => {
+    const index = db.findIndex((user) => user.id === id);
+
+    if (index === -1) {
+      rej(MESSAGE_ERROR_404);
+    }
+
+    db = db.filter((user) => user.id !== id);
+
+    res(CODE_204);
   });
 }

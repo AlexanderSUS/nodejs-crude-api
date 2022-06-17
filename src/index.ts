@@ -3,7 +3,7 @@ import { MESSAGE_ERROR_400, MESSAGE_ERROR_404 } from './const/messages';
 import { CODE_400, CODE_404 } from './const/statusCodes';
 import { USERS_URL } from './const/urls';
 import {
-  getUsers, getUser, createUser, updateUser,
+  getUsers, getUser, createUser, updateUser, deleteUser,
 } from './controllers/userController';
 import ID_PARAM_ORDER from './const/id';
 
@@ -25,6 +25,14 @@ const server = createServer((req, res) => {
     const userId: string = req.url.split('/')[ID_PARAM_ORDER];
     if (userId && typeof userId === 'string') {
       updateUser(req, res, userId);
+    } else {
+      res.writeHead(CODE_400, { 'Content-type': 'application/json' });
+      res.end(JSON.stringify({ message: MESSAGE_ERROR_400 }));
+    }
+  } else if (req.url?.startsWith(`${USERS_URL}/`) && req.method === 'DELETE') {
+    const userId: string = req.url.split('/')[ID_PARAM_ORDER];
+    if (userId && typeof userId === 'string') {
+      deleteUser(req, res, userId);
     } else {
       res.writeHead(CODE_400, { 'Content-type': 'application/json' });
       res.end(JSON.stringify({ message: MESSAGE_ERROR_400 }));

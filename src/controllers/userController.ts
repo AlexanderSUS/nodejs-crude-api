@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { MESSAGE_ERROR_400, MESSAGE_ERROR_404, MESSAGE_ERROR_500 } from '../const/messages';
 import {
-  CODE_200, CODE_201, CODE_400, CODE_404, CODE_500,
+  CODE_200, CODE_201, CODE_204, CODE_400, CODE_404, CODE_500,
 } from '../const/statusCodes';
 import * as Users from '../models/userModel';
 import getPostData from '../utils/getPostData';
@@ -66,8 +66,25 @@ export async function updateUser(req: IncomingMessage, res: ServerResponse, user
     res.writeHead(CODE_200, { 'Content-type': 'application/json' });
     res.end(JSON.stringify(updatedUser));
   } catch (err) {
-    if (err === MESSAGE_ERROR_400) {
-      res.writeHead(CODE_400, { 'Content-type': 'application/json' });
+    if (err === MESSAGE_ERROR_404) {
+      res.writeHead(CODE_404, { 'Content-type': 'application/json' });
+      res.end(JSON.stringify({ message: err }));
+    } else {
+      res.writeHead(CODE_500, { 'Content-type': 'application/json' });
+      res.end(JSON.stringify({ message: MESSAGE_ERROR_500 }));
+    }
+  }
+}
+
+export async function deleteUser(req: IncomingMessage, res: ServerResponse, userId: string) {
+  try {
+    await Users.deleteUser(userId);
+
+    res.writeHead(CODE_204, { 'Content-type': 'application/json' });
+    res.end();
+  } catch (err) {
+    if (err === MESSAGE_ERROR_404) {
+      res.writeHead(CODE_404, { 'Content-type': 'application/json' });
       res.end(JSON.stringify({ message: err }));
     } else {
       res.writeHead(CODE_500, { 'Content-type': 'application/json' });
