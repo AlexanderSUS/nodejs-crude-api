@@ -11,7 +11,7 @@ export default function getPostData(req: IncomingMessage): Promise<NewUser> {
       body += chunk.toString();
     });
 
-    req.on('end', async () => {
+    req.on('end', () => {
       const data = JSON.parse(body);
 
       if (isNewUser(data)) {

@@ -38,7 +38,7 @@ export async function createUser(req: IncomingMessage, res: ServerResponse) {
 
     replyOkWithData(res, user);
   } catch (err) {
-    replyInternalServerError(res);
+    replyNotFoundOrInternalServerError(res, err);
   }
 }
 

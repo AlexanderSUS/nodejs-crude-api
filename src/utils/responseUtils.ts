@@ -38,6 +38,8 @@ export const replyDeleted = (res: ServerResponse) => {
 export const replyNotFoundOrInternalServerError = (res: ServerResponse, err: unknown) => {
   if (err === MESSAGE_ERROR_404) {
     replyNotFound(res);
+  } else if (err === MESSAGE_ERROR_400) {
+    replyBadRequest(res);
   } else {
     replyInternalServerError(res);
   }

@@ -1,8 +1,6 @@
 import http from 'http';
 import { USERS_URL } from '../src/const/minor';
-import {
-  CODE_204, CODE_400, CODE_404, CODE_500,
-} from '../src/const/statusCodes';
+import { CODE_204, CODE_400, CODE_404 } from '../src/const/statusCodes';
 import { NewUser } from '../src/types/user';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -80,26 +78,12 @@ describe('POST method work properly', () => {
     req.end();
   });
 
-  // TODO create object with invalid data types
-  // test('POST api/users with invalit data types should return 400 staus code', () => {
-  //   const invalidData = JSON.stringify(invalidNewUserData);
-  //   const invaliDataContentLeng = invalidData.length;
-
-  //   const req = http.request(getRequestConfig('POST', USERS_URL, invaliDataContentLeng),
-  // (res) => {
-  //     expect(res.statusCode).toBe(CODE_400);
-  //   });
-
-  //   req.write(invalidData);
-  //   req.end();
-  // });
-
-  test('POST api/users with invalid object keys should return 500 staus code', () => {
+  test('POST api/users with invalid object keys should return 400 staus code', () => {
     const invalidData = JSON.stringify(invalidNewUserData);
     const invaliDataContentLength = invalidData.length;
 
     const req = http.request(getRequestConfig('POST', USERS_URL, invaliDataContentLength), (res) => {
-      expect(res.statusCode).toBe(CODE_500);
+      expect(res.statusCode).toBe(CODE_400);
     });
 
     req.write(invalidData);
@@ -211,37 +195,7 @@ describe('PUT method work properly', () => {
     req.end();
   });
 
-  // test('PUT api/users/id with invalid data types should return 400 staus code', () => {
-  //   // Create new user and get userId form response
-  //   const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), (res) => {
-  //     let responseData = '';
-
-  //     res.on('data', (chunk) => {
-  //       responseData += chunk.toString();
-  //     });
-
-  //     res.on('end', () => {
-  //       const { id } = JSON.parse(responseData);
-
-  //       const invalidData = JSON.stringify(invalidNewUserData);
-  //       const invaliDataContentLeng = invalidData.length;
-
-  //       // Send PUT requset with userId
-  //       const putRequest = http.request(
-  // getRequestConfig('PUT', `${USERS_URL}/${id}`, invaliDataContentLeng), (putResponse) => {
-  //         expect(putResponse.statusCode).toBe(CODE_400);
-  //       });
-
-  //       putRequest.write(invalidData);
-  //       putRequest.end();
-  //     });
-  //   });
-
-  //   req.write(data);
-  //   req.end();
-  // });
-
-  test('PUT api/users/id with invalid key data should return 500 staus code', () => {
+  test('PUT api/users/id with invalid key in object should return 400 staus code', () => {
     // Create new user and get userId form response
     const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), (res) => {
       let responseData = '';
@@ -258,7 +212,7 @@ describe('PUT method work properly', () => {
 
         // Send PUT requset with userId
         const putRequest = http.request(getRequestConfig('PUT', `${USERS_URL}/${id}`, invaliDataContentLeng), (putResponse) => {
-          expect(putResponse.statusCode).toBe(CODE_500);
+          expect(putResponse.statusCode).toBe(CODE_400);
         });
 
         putRequest.write(invalidData);
