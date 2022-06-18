@@ -5,34 +5,33 @@ import {
 } from '../const/statusCodes';
 import { User } from '../types/user';
 
+const fillResponse = (res: ServerResponse, code: number, data?: User | User[] | string) => {
+  res.writeHead(code, { 'Content-type': 'application/json' });
+  res.end(data ? JSON.stringify(data) : null);
+};
+
 export const replyNotFound = (res: ServerResponse) => {
-  res.writeHead(CODE_404, { 'Content-type': 'application/json' });
-  res.end(JSON.stringify({ message: MESSAGE_ERROR_404 }));
+  fillResponse(res, CODE_404, MESSAGE_ERROR_404);
 };
 
 export const replyBadRequest = (res: ServerResponse) => {
-  res.writeHead(CODE_400, { 'Content-type': 'application/json' });
-  res.end(JSON.stringify({ message: MESSAGE_ERROR_400 }));
+  fillResponse(res, CODE_400, MESSAGE_ERROR_400);
 };
 
 export const replyInternalServerError = (res: ServerResponse) => {
-  res.writeHead(CODE_500, { 'Content-type': 'application/json' });
-  res.end(JSON.stringify({ message: MESSAGE_ERROR_500 }));
+  fillResponse(res, CODE_500, MESSAGE_ERROR_500);
 };
 
 export const replyOkWithData = (res: ServerResponse, data: User | User[]) => {
-  res.writeHead(CODE_200, { 'Content-type': 'application/json' });
-  res.end(JSON.stringify(data));
+  fillResponse(res, CODE_200, data);
 };
 
 export const replyCreatedWithData = (res: ServerResponse, data: User) => {
-  res.writeHead(CODE_201, { 'Content-type': 'application/json' });
-  res.end(JSON.stringify(data));
+  fillResponse(res, CODE_201, data);
 };
 
 export const replyDeleted = (res: ServerResponse) => {
-  res.writeHead(CODE_204, { 'Content-type': 'application/json' });
-  res.end();
+  fillResponse(res, CODE_204);
 };
 
 export const replyNotFoundOrInternalServerError = (res: ServerResponse, err: unknown) => {
