@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import http from 'http';
 import { USERS_URL } from '../src/const/minor';
-import { CODE_400, CODE_404 } from '../src/const/statusCodes';
+import {
+  CODE_204, CODE_400, CODE_404, CODE_500,
+} from '../src/const/statusCodes';
 import { NewUser } from '../src/types/user';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -10,6 +11,12 @@ const newUserData: NewUser = {
   username: 'Pablo',
   age: 51,
   hobbies: ['fishing', 'hunting'],
+};
+
+const updateUserData: NewUser = {
+  username: 'Jovano',
+  age: 42,
+  hobbies: ['hiking, swiming, bouling'],
 };
 
 const invalidNewUserData = {
@@ -39,11 +46,25 @@ const getRequestConfig = (method: Method, path: string, contentLength: number) =
   },
 });
 
+const getDeleteRequestConfig = (id: string) => ({
+  hostname: 'localhost',
+  port: process.env.PORT || 5000,
+  path: `${USERS_URL}/${id}`,
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 const nonExistentEndpoint = '/some-non/existing/resource';
+
+const nonExistentId = '84df97c5-2ce2-4a31-aeb3-e3121a90fc8c';
+
+const invalidId = 'invalid-id';
 
 describe('POST method work properly', () => {
   test('POST api/users should return newly created user', () => {
-    const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), async (res) => {
+    const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), (res) => {
       let responseData = '';
 
       res.on('data', (chunk) => {
@@ -59,14 +80,26 @@ describe('POST method work properly', () => {
     req.end();
   });
 
-  test('POST api/users with wrong data should return 400 staus code', () => {
-    const invalidData = JSON.stringify(invalidNewUserData);
-    const invaliDataContentLeng = invalidData.length;
+  // TODO create object with invalid data types
+  // test('POST api/users with invalit data types should return 400 staus code', () => {
+  //   const invalidData = JSON.stringify(invalidNewUserData);
+  //   const invaliDataContentLeng = invalidData.length;
 
-    const req = http.request(getRequestConfig('POST', USERS_URL, invaliDataContentLeng), (res) => {
-      res.on('end', () => {
-        expect(res.statusCode).toBe(CODE_400);
-      });
+  //   const req = http.request(getRequestConfig('POST', USERS_URL, invaliDataContentLeng),
+  // (res) => {
+  //     expect(res.statusCode).toBe(CODE_400);
+  //   });
+
+  //   req.write(invalidData);
+  //   req.end();
+  // });
+
+  test('POST api/users with invalid object keys should return 500 staus code', () => {
+    const invalidData = JSON.stringify(invalidNewUserData);
+    const invaliDataContentLength = invalidData.length;
+
+    const req = http.request(getRequestConfig('POST', USERS_URL, invaliDataContentLength), (res) => {
+      expect(res.statusCode).toBe(CODE_500);
     });
 
     req.write(invalidData);
@@ -74,7 +107,7 @@ describe('POST method work properly', () => {
   });
 
   test('POST some-non/existing/resource should return 404 status code', () => {
-    const req = http.request(getRequestConfig('POST', nonExistentEndpoint, dataContentLength), (res) => {
+    const req = http.request(getRequestConfig('POST', nonExistentEndpoint, dataContentLength), async (res) => {
       res.on('end', () => {
         expect(res.statusCode).toBe(CODE_404);
       });
@@ -96,7 +129,7 @@ describe('GET method work properly', () => {
       res.on('end', () => {
         const expectedUserArray = JSON.parse(body);
 
-        expect(expectedUserArray.length).toBe(1);
+        expect(expectedUserArray.length).toBeGreaterThan(0);
       });
     });
   });
@@ -135,5 +168,161 @@ describe('GET method work properly', () => {
 
     req.write(data);
     req.end();
+  });
+});
+
+describe('PUT method work properly', () => {
+  test('PUT api/users/userId should return updated user', () => {
+    // Create new user and get userId form response
+    const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), (res) => {
+      let responseData = '';
+
+      res.on('data', (chunk) => {
+        responseData += chunk.toString();
+      });
+
+      res.on('end', () => {
+        const { id } = JSON.parse(responseData);
+
+        const userData = JSON.stringify(updateUserData);
+        const updateDataContentLength = userData.length;
+
+        // Send PUT requset with userId
+        const putRequest = http.request(getRequestConfig('PUT', `${USERS_URL}/${id}`, updateDataContentLength), (putResponse) => {
+          // Clear old data
+          responseData = '';
+
+          putResponse.on('data', (chunk) => {
+            responseData += chunk.toString();
+          });
+
+          putResponse.on('end', () => {
+            const updatedUser = JSON.parse(responseData);
+            expect(updatedUser).toEqual({ id, ...updateUserData });
+          });
+        });
+
+        putRequest.write(userData);
+        putRequest.end();
+      });
+    });
+
+    req.write(data);
+    req.end();
+  });
+
+  // test('PUT api/users/id with invalid data types should return 400 staus code', () => {
+  //   // Create new user and get userId form response
+  //   const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), (res) => {
+  //     let responseData = '';
+
+  //     res.on('data', (chunk) => {
+  //       responseData += chunk.toString();
+  //     });
+
+  //     res.on('end', () => {
+  //       const { id } = JSON.parse(responseData);
+
+  //       const invalidData = JSON.stringify(invalidNewUserData);
+  //       const invaliDataContentLeng = invalidData.length;
+
+  //       // Send PUT requset with userId
+  //       const putRequest = http.request(
+  // getRequestConfig('PUT', `${USERS_URL}/${id}`, invaliDataContentLeng), (putResponse) => {
+  //         expect(putResponse.statusCode).toBe(CODE_400);
+  //       });
+
+  //       putRequest.write(invalidData);
+  //       putRequest.end();
+  //     });
+  //   });
+
+  //   req.write(data);
+  //   req.end();
+  // });
+
+  test('PUT api/users/id with invalid key data should return 500 staus code', () => {
+    // Create new user and get userId form response
+    const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), (res) => {
+      let responseData = '';
+
+      res.on('data', (chunk) => {
+        responseData += chunk.toString();
+      });
+
+      res.on('end', () => {
+        const { id } = JSON.parse(responseData);
+
+        const invalidData = JSON.stringify(invalidNewUserData);
+        const invaliDataContentLeng = invalidData.length;
+
+        // Send PUT requset with userId
+        const putRequest = http.request(getRequestConfig('PUT', `${USERS_URL}/${id}`, invaliDataContentLeng), (putResponse) => {
+          expect(putResponse.statusCode).toBe(CODE_500);
+        });
+
+        putRequest.write(invalidData);
+        putRequest.end();
+      });
+    });
+
+    req.write(data);
+    req.end();
+  });
+
+  test('PUT api/users/non-existent-id should return 404 status code', () => {
+    const userData = JSON.stringify(updateUserData);
+    const updateDataContentLength = userData.length;
+
+    // Send PUT requset with userId
+    const putRequest = http.request(getRequestConfig('PUT', `${USERS_URL}/${nonExistentId}`, updateDataContentLength), (putResponse) => {
+      expect(putResponse.statusCode).toBe(CODE_404);
+    });
+
+    putRequest.write(userData);
+    putRequest.end();
+  });
+});
+
+describe('DELETE method work properly', () => {
+  test('DELETE api/users/userId should delete existent user from database and return 204 status code', () => {
+    // Create new user and get userId form response
+    const req = http.request(getRequestConfig('POST', USERS_URL, dataContentLength), (res) => {
+      let responseData = '';
+
+      res.on('data', (chunk) => {
+        responseData += chunk.toString();
+      });
+
+      res.on('end', () => {
+        const { id } = JSON.parse(responseData);
+
+        // Send DELTE requset with userId
+        const deleteRequest = http.request(getDeleteRequestConfig(id), (deleteResponse) => {
+          expect(deleteResponse.statusCode).toBe(CODE_204);
+        });
+
+        deleteRequest.end();
+      });
+    });
+
+    req.write(data);
+    req.end();
+  });
+
+  test('DELETE api/users/id with invalid id should return 400 staus code', () => {
+    const deleteRequest = http.request(getDeleteRequestConfig(invalidId), (deleteResponse) => {
+      expect(deleteResponse.statusCode).toBe(CODE_400);
+    });
+
+    deleteRequest.end();
+  });
+
+  test('DELETE api/users/non-existent-id should return 404 status code', () => {
+    const deleteRequest = http.request(getDeleteRequestConfig(nonExistentId), (deleteResponse) => {
+      expect(deleteResponse.statusCode).toBe(CODE_404);
+    });
+
+    deleteRequest.end();
   });
 });
