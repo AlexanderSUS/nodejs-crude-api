@@ -3,9 +3,7 @@ import { NewUser, User } from '../types/user';
 import { MESSAGE_ERROR_404 } from '../const/messages';
 import { CODE_204 } from '../const/statusCodes';
 
-import initialData from '../const/initialData';
-
-let db: User[] = initialData;
+let db: User[] = [];
 
 export function findAllUsers(): Promise<User[]> {
   return new Promise((res) => {
