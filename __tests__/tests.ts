@@ -229,18 +229,18 @@ describe('PUT method work properly', () => {
     req.end();
   });
 
-  // test('PUT api/users/non-existent-id should return 404 status code', () => {
-  //   const userData = JSON.stringify(updateUserData);
-  //   const updateDataContentLength = userData.length;
+  test('PUT api/users/non-existent-id should return 404 status code', () => {
+    const userData = JSON.stringify(updateUserData);
+    const updateDataContentLength = userData.length;
 
-  //   // Send PUT requset with userId
-  //   const putRequest = http.request(getRequestConfig('PUT', `${USERS_URL}/${nonExistentId}`, updateDataContentLength), (putResponse) => {
-  //     expect(putResponse.statusCode).toBe(CODE_404);
-  //   });
+    // Send PUT requset with userId
+    const putRequest = http.request(getRequestConfig('PUT', `${USERS_URL}/${nonExistentId}`, updateDataContentLength), (putResponse) => {
+      expect(putResponse.statusCode).toBe(CODE_404);
+    });
 
-  //   putRequest.write(userData);
-  //   putRequest.end();
-  // });
+    putRequest.write(userData);
+    putRequest.end();
+  });
 });
 
 describe('DELETE method work properly', () => {
@@ -277,11 +277,11 @@ describe('DELETE method work properly', () => {
     deleteRequest.end();
   });
 
-  // test('DELETE api/users/non-existent-id should return 404 status code', () => {
-  //   const deleteRequest = http.request(getDeleteRequestConfig(nonExistentId), (deleteResponse) => {
-  //     expect(deleteResponse.statusCode).toBe(CODE_404);
-  //   });
+  test('DELETE api/users/non-existent-id should return 404 status code', () => {
+    const deleteRequest = http.request(getDeleteRequestConfig(nonExistentId), (deleteResponse) => {
+      expect(deleteResponse.statusCode).toBe(CODE_404);
+    });
 
-  //   deleteRequest.end();
-  // });
+    deleteRequest.end();
+  });
 });

@@ -73,8 +73,8 @@ export function updateUser(id: string, userData: NewUser): Promise<User> {
 
     process.send?.(message);
 
-    process.on('message', (data: UpdateUserReturnType) => {
-      if (data) {
+    process.on('message', (data: UpdateUserReturnType | typeof MESSAGE_ERROR_404) => {
+      if (data && data !== MESSAGE_ERROR_404) {
         res(data);
       }
 
@@ -93,7 +93,7 @@ export function deleteUser(id: string): Promise<number> {
     process.send?.(message);
 
     process.on('message', (data: DeleteUserReturnType) => {
-      if (data) {
+      if (data && typeof data === 'boolean') {
         res(CODE_204);
       }
 
