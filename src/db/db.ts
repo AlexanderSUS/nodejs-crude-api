@@ -19,9 +19,11 @@ class Database implements Db {
     return index === -1 ? null : { ...this.users[index] };
   }
 
-  addUser(user: User): true {
+  addUser(user: User): User | null {
     this.users.push(user);
-    return true;
+    const findedUser = this.users.find((dbUser) => dbUser.id === user.id);
+
+    return findedUser || null;
   }
 
   updateUser({ id, userData }: UpdateUserPayload): User | null {

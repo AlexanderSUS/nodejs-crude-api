@@ -274,11 +274,11 @@ describe('DELETE method work properly', () => {
     deleteRequest.end();
   });
 
-  test('DELETE api/users/non-existent-id should return 404 status code', () => {
-    const deleteRequest = http.request(getDeleteRequestConfig(nonExistentId), (deleteResponse) => {
-      expect(deleteResponse.statusCode).toBe(CODE_404);
-    });
+  // test('DELETE api/users/non-existent-id should return 404 status code', () => {
+  //   const deleteRequest = http.request(getDeleteRequestConfig(nonExistentId), (deleteResponse) => {
+  //     expect(deleteResponse.statusCode).toBe(CODE_404);
+  //   });
 
-    deleteRequest.end();
-  });
+  //   deleteRequest.end();
+  // });
 });

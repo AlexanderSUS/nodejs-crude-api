@@ -9,7 +9,7 @@ export interface Db {
   users:User[];
   getUsers: () => User[];
   getUser: (id: string) => User | null;
-  addUser: (user: User) => true;
+  addUser: (user: User) => User | null;
   updateUser: ({ id, userData }: UpdateUserPayload) => User | null;
   deleteUser: (id: string) => boolean;
 }

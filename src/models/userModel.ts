@@ -34,9 +34,10 @@ export function findById(id: string): Promise<User> {
     process.send?.(message);
 
     process.on('message', (data: GetUserReturnType) => {
-      if (JSON.stringify(data) !== null && data) {
+      if (data) {
         res(data);
       }
+
       rej(MESSAGE_ERROR_404);
     });
   });
@@ -57,6 +58,7 @@ export function createUser(newUserData: NewUser): Promise<User> {
       if (data) {
         res(user);
       }
+
       rej(MESSAGE_ERROR_500);
     });
   });
@@ -72,9 +74,10 @@ export function updateUser(id: string, userData: NewUser): Promise<User> {
     process.send?.(message);
 
     process.on('message', (data: UpdateUserReturnType) => {
-      if (JSON.stringify(data) !== null && data) {
+      if (data) {
         res(data);
       }
+
       rej(MESSAGE_ERROR_404);
     });
   });
