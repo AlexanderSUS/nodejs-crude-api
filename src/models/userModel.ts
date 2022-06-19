@@ -1,60 +1,100 @@
 import { v4 as uuidv4 } from 'uuid';
 import { NewUser, User } from '../types/user';
-import { MESSAGE_ERROR_404 } from '../const/messages';
+import { MESSAGE_ERROR_404, MESSAGE_ERROR_500 } from '../const/messages';
 import { CODE_204 } from '../const/statusCodes';
-
-let db: User[] = [];
+import UserDbMethodKey from '../const/DbMethodKey';
+import {
+  AddUserReturnType,
+  DeleteUserReturnType,
+  GenericWorkerMessage, GetUserReturnType,
+  GetUsersReturnType, UpdateUserPayload,
+  UpdateUserReturnType,
+  WorkerMessagePayloadless,
+} from '../types/db';
 
 export function findAllUsers(): Promise<User[]> {
   return new Promise((res) => {
-    res(db);
+    const message: WorkerMessagePayloadless = { methodKey: UserDbMethodKey.getUsers };
+
+    process.send?.(message);
+
+    process.on('message', (data: GetUsersReturnType) => {
+      res(data);
+    });
   });
 }
 
 export function findById(id: string): Promise<User> {
   return new Promise((res, rej) => {
-    const index = db.findIndex((user) => user.id === id);
+    const message: GenericWorkerMessage<string> = {
+      methodKey: UserDbMethodKey.getUser,
+      payload: id,
+    };
 
-    if (index === -1) {
+    process.send?.(message);
+
+    process.on('message', (data: GetUserReturnType) => {
+      if (JSON.stringify(data) !== null && data) {
+        res(data);
+      }
       rej(MESSAGE_ERROR_404);
-    }
-    res(db[index]);
+    });
   });
 }
 
 export function createUser(newUserData: NewUser): Promise<User> {
-  return new Promise((res) => {
+  return new Promise((res, rej) => {
     const user: User = { id: uuidv4(), ...newUserData };
 
-    db.push(user);
-    res(user);
+    const message: GenericWorkerMessage<User> = {
+      methodKey: UserDbMethodKey.addUser,
+      payload: user,
+    };
+
+    process.send?.(message);
+
+    process.on('message', (data: AddUserReturnType) => {
+      if (data) {
+        res(user);
+      }
+      rej(MESSAGE_ERROR_500);
+    });
   });
 }
 
 export function updateUser(id: string, userData: NewUser): Promise<User> {
   return new Promise((res, rej) => {
-    const index = db.findIndex((user) => user.id === id);
+    const message: GenericWorkerMessage<UpdateUserPayload> = {
+      methodKey: UserDbMethodKey.updateUser,
+      payload: { id, userData },
+    };
 
-    if (index === -1) {
+    process.send?.(message);
+
+    process.on('message', (data: UpdateUserReturnType) => {
+      if (JSON.stringify(data) !== null && data) {
+        res(data);
+      }
       rej(MESSAGE_ERROR_404);
-    }
-
-    db[index] = { id, ...userData };
-
-    res(db[index]);
+    });
   });
 }
 
 export function deleteUser(id: string): Promise<number> {
   return new Promise((res, rej) => {
-    const index = db.findIndex((user) => user.id === id);
+    const message: GenericWorkerMessage<string> = {
+      methodKey: UserDbMethodKey.deleteUser,
+      payload: id,
+    };
 
-    if (index === -1) {
+    process.send?.(message);
+
+    process.on('message', (data: DeleteUserReturnType) => {
+      if (data) {
+        res(CODE_204);
+      }
+
       rej(MESSAGE_ERROR_404);
-    }
-
-    db = db.filter((user) => user.id !== id);
-
-    res(CODE_204);
+    });
   });
 }
