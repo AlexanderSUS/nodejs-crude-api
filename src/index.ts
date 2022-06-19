@@ -1,12 +1,11 @@
-import { createServer } from 'http';
-import cluster from 'cluster';
-import os from 'os';
+import { createServer } from 'node:http';
+import cluster from 'node:cluster';
+import os from 'node:os';
 import router from './router/router';
 import Database from './db/db';
 import { DbPayload, WorkerMessage } from './types/db';
 import isGetUsersMethodKey from './utils/isGetUsersMethod';
 import { MESSAGE_ERROR_404 } from './const/messages';
-import 'dotenv/config';
 import { DEFAULT_PORT } from './const/minor';
 
 const PORT = process.env.PORT || DEFAULT_PORT;
