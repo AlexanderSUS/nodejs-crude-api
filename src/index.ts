@@ -6,8 +6,9 @@ import Database from './db/db';
 import { DbPayload, WorkerMessage } from './types/db';
 import isGetUsersMethodKey from './utils/isGetUsersMethod';
 import { MESSAGE_ERROR_404 } from './const/messages';
+import 'dotenv/config';
+import { DEFAULT_PORT } from './const/minor';
 
-const DEFAULT_PORT = 5000;
 const PORT = process.env.PORT || DEFAULT_PORT;
 
 const { pid } = process;
@@ -41,6 +42,6 @@ if (cluster.isPrimary) {
     });
   }
 } else {
-  process.stdout.write(`Worker: ${cluster.worker?.id}, pid: ${pid}, port: ${DEFAULT_PORT}\n`);
+  process.stdout.write(`Worker: ${cluster.worker?.id}, pid: ${pid}, port: ${PORT}\n`);
   createServer(router).listen(PORT);
 }

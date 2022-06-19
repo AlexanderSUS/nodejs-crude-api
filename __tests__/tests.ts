@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable max-len */
 import http from 'http';
-import { USERS_URL } from '../src/const/minor';
+import { DEFAULT_PORT, USERS_URL } from '../src/const/minor';
 import { CODE_204, CODE_400, CODE_404 } from '../src/const/statusCodes';
 import { NewUser } from '../src/types/user';
+import 'dotenv/config';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+const PORT = process.env.PORT || DEFAULT_PORT;
 
 const newUserData: NewUser = {
   username: 'Pablo',
@@ -30,14 +33,14 @@ const dataContentLength = data.length;
 
 const getGetRequestConfig = (path: string) => ({
   hostname: 'localhost',
-  port: process.env.PORT || 5000,
+  port: PORT,
   path,
   agent: false,
 });
 
 const getRequestConfig = (method: Method, path: string, contentLength: number) => ({
   hostname: 'localhost',
-  port: process.env.PORT || 5000,
+  port: PORT,
   path,
   method,
   headers: {
@@ -48,7 +51,7 @@ const getRequestConfig = (method: Method, path: string, contentLength: number) =
 
 const getDeleteRequestConfig = (id: string) => ({
   hostname: 'localhost',
-  port: process.env.PORT || 5000,
+  port: PORT,
   path: `${USERS_URL}/${id}`,
   method: 'DELETE',
   headers: {
