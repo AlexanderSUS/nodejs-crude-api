@@ -68,12 +68,12 @@ Users are stored as objects that have following properties:
             hobbies: Array<string>
        }
     
-  - Server answer with `status code` **201** and newly created record
-  - Server answer with `status code` **400** and corresponding message if request `body` does not contain **required** fields or `body` fields has invalid types
+   - Server answer with `status code` **201** and newly created record
+   - Server answer with `status code` **400** and corresponding message if request `body` does not contain **required** fields or `body` fields has invalid types
  
 - **PUT** `api/users/{userId}` is used to update existing user
 
- POST request `body`:
+   POST request `body`:
 
        {    
             username: string,
@@ -85,10 +85,10 @@ Users are stored as objects that have following properties:
   - Server answer with` status code` **400** and corresponding message if `userId` is invalid (not `uuid`) or `body` fields has invalid types
   - Server answer with` status code` **404** and corresponding message if record with `id === userId` doesn't exist
  
-- **DELETE** `api/users/${userId}` is used to delete existing user from database
-  - Server answer with `status code` **204** if the record is found and deleted
-  - Server answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
-  - Server answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
+ - **DELETE** `api/users/${userId}` is used to delete existing user from database
+   - Server answer with `status code` **204** if the record is found and deleted
+   - Server answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
+   - Server answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
    
 
 Requests to non-existing endpoints (e.g. `some-non/existing/resource`) will handled (server answer with `status code` **404** and message "Resource not found")
