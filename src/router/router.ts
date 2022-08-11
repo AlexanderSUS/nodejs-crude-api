@@ -2,7 +2,6 @@ import { IncomingMessage, ServerResponse } from 'http';
 import {
   getUsers, getUser, createUser, updateUser, deleteUser,
 } from '../controllers/userController';
-import { ID_PARAM_ORDER } from '../const/minor';
 import {
   isDeleteUserRequest, isGetUserRequest, isGetUsersRequest,
   isInvalidMethod, isPostUserRequest,
@@ -19,7 +18,7 @@ const router = (req: IncomingMessage, res: ServerResponse) => {
   } else if (isPostUserRequest(req)) {
     createUser(req, res);
   } else if (isUserGetOrPutOrDeleteRequest(req)) {
-    const id = req.url?.split('/')[ID_PARAM_ORDER];
+    const id = req.url?.split('/').pop();
 
     if (!isIdValid(id)) {
       replyBadRequest(res);
