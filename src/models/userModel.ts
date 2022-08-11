@@ -1,4 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
+import crypto from 'node:crypto';
 import { NewUser, User } from '../types/user';
 import { MESSAGE_ERROR_404, MESSAGE_ERROR_500 } from '../const/messages';
 import { CODE_204 } from '../const/statusCodes';
@@ -33,19 +34,21 @@ export function findById(id: string): Promise<User> {
 
     process.send?.(message);
 
-    process.on('message', (data: GetUserReturnType) => {
-      if (data) {
-        res(data);
+    process.on('message', (data: GetUserReturnType | string) => {
+      if (!data || typeof data === 'string') {
+        rej(MESSAGE_ERROR_404);
+
+        return;
       }
 
-      rej(MESSAGE_ERROR_404);
+      res(data);
     });
   });
 }
 
 export function createUser(newUserData: NewUser): Promise<User> {
   return new Promise((res, rej) => {
-    const user: User = { id: uuidv4(), ...newUserData };
+    const user: User = { id: crypto.randomUUID(), ...newUserData };
 
     const message: GenericWorkerMessage<User> = {
       methodKey: UserDbMethodKey.addUser,

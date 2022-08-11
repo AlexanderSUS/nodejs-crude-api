@@ -158,6 +158,12 @@ describe('GET method work properly', () => {
     req.write(data);
     req.end();
   });
+
+  test('GET api/users/userId should return status code 404 if user does not exist', () => {
+    http.get(getGetRequestConfig(`http://localhost:${PORT}/${USERS_URL}/${nonExistentId}`), (res) => {
+      expect(res.statusCode).toBe(CODE_404);
+    });
+  });
 });
 
 describe('PUT method work properly', () => {

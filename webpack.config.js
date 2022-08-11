@@ -19,6 +19,7 @@ module.exports = {
     'node:cluster': 'commonjs2 node:cluster',
     'node:os': 'commonjs2 node:os',
     'node:http': 'commonjs2 node:http',
+    'node:crypto': 'commonjs2 node:crypto',
   },
   output: {
     filename: 'bundle.js',
