@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import * as Users from '../models/userModel';
 import getPostData from '../utils/getPostData';
 import {
+  replyCreatedWithData,
   replyDeleted, replyInternalServerError, replyNotFoundOrInternalServerError, replyOkWithData,
 } from '../utils/responseUtils';
 
@@ -36,7 +37,7 @@ export async function createUser(req: IncomingMessage, res: ServerResponse) {
     const newUser = await getPostData(req);
     const user = await Users.createUser(newUser);
 
-    replyOkWithData(res, user);
+    replyCreatedWithData(res, user);
   } catch (err) {
     replyNotFoundOrInternalServerError(res, err);
   }
